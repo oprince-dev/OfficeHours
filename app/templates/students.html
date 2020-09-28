@@ -1,0 +1,102 @@
+{% extends 'index.html' %}
+{% include 'topnav.html' %}
+{% include 'leftnav.html' %}
+
+
+{% block body %}
+<div class="content">
+  <main>
+    <div class="container">
+      <h1>Students</h1>
+      <div class="row studentsTableRow">
+        <div class="col-md-12">
+          <div class="tableTabs">
+            <nav class="navbar navbar-dark bg-dark">
+              <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <a href="{{ url_for('students', class='all') }}" class="nav-link active">All</a>
+                </li>
+                {% for class in classes_tabs %}
+                <li class="nav-item">
+                  <a href="{{ url_for('students', class=class.classroom_id) }}" class="nav-link">{{ class.title }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+
+              <form method="get" action="{{ url_for('students', search='None') }}" class="form-inline" id="studentSearchBar">
+                <input type="text" name="search" id="studentSearchBar" class="form-control mr-sm-2" placeholder="Search..">
+                <input type="submit" class="btn btn-outline-primary" value="Search">
+              </form>
+            </nav>
+          </div>
+          <table class="table table-hover table-dark studentsTable">
+            <thead class="thead-dark">
+              <tr>
+                <th id="th_id">
+                  <a href="{{ url_for('students', class=active, sort='id') }}" method="get">ID</a>
+                </th>
+                <th id="th_first_name">
+                  <a href="{{ url_for('students', class=active, sort='first') }}" method="get">First</a>
+                </th>
+                <th id="th_last_name">
+                  <a href="{{ url_for('students', class=active, sort='last') }}" method="get">Last</a>
+                </th>
+                <th id="th_class">
+                  Class
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for student in students %}
+              <tr>
+                <td>{{ student.student_id }}</td>
+                <td>{{ student.first_name }}</td>
+                <td>{{ student.last_name }}</td>
+                <td>
+                {% if active == 0 %}
+                  {% for class in student.classes %}
+                    {{ class.title }}
+                  {% endfor %}
+                {% else %}
+                  {{ cs.title }}
+                {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row manageRow">
+        <div class="col-md-6">
+          <div class="card bg-dark">
+            <div class="card-body">
+              <h5 class="card-title">Add Class</h5>
+              <p class="card-text">Upload an Excel file or input student data manually</p>
+              <a href="/add/class" class="btn btn-primary">Add Class</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card bg-dark">
+            <div class="card-body">
+              <h5 class="card-title">Add Student</h5>
+              <p class="card-text">Upload an Excel file or input student data manually</p>
+              <a href="/add/student" class="btn btn-primary">Add Student</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock body %}
+{% block script %}
+<script>
+  $(function() {
+    var id = {{ active }} + 1;
+    $(".tableTabs nav ul li a").removeClass('active');
+    $(".tableTabs nav ul li:nth-child(" + id +") a").addClass('active');
+  });
+</script>
+{% endblock script %}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Office Hours</title>
+  </head>
+  <body>
+    {% block topnav %}{% endblock topnav %}
+    {% block leftnav %}{% endblock leftnav %}
+    {% block body %}{% endblock body %}
+  </body>
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}" charset="utf-8"></script>
+  <script src="{{ url_for('static', filename='js/popper.min.js') }}" charset="utf-8"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.js') }}" charset="utf-8"></script>
+  {% block script %}{% endblock script %}
+</html>

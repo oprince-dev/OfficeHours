@@ -1,0 +1,29 @@
+{% block leftnav %}
+<div class="wrapper" id="leftnav-wrapper">
+  <nav class="leftnav">
+    <div class="navbar-header">
+      <h4>Teacher</h4>
+      <h6>teacher@email.com</h6>
+    </div>
+    <div class="nav-menu">
+      <ul class="navbar-nav list-unstyled">
+        <li class="nav-item">
+          <a href="{{ url_for('students', class='all') }}" class="nav-link">Students</a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ url_for('assignments') }}" class="nav-link">Assignments</a>
+        </li>
+        <li class="nav-item">
+          <a href="" class="nav-link">Whiteboard</a>
+        </li>
+        <li class="nav-item">
+          <a href="" class="nav-link">Online Room</a>
+        </li>
+        <li class="nav-item">
+          <a href="" class="nav-link">Help Desk</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>
+{% endblock leftnav %}
