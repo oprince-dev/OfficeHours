@@ -1,6 +1,6 @@
 from app import app
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, SelectField, PasswordField, SubmitField, BooleanField, Form, FormField, FieldList
 from wtforms.validators import DataRequired, ValidationError
 from wtforms.validators import Email, EqualTo, Length
 
@@ -43,9 +43,10 @@ class StudentRegisterForm(FlaskForm):
         if existing_email:
             raise ValidationError('Email already exists.')
 
-class StudentSearchForm(FlaskForm):
-    search = StringField('', validators=[DataRequired()])
-    submit = SubmitField('Search')
-
-# class AddStudentForm(FlaskForm):
-#     first =
+class AddStudentForm(FlaskForm):
+    student_id = StringField('ID', validators=[DataRequired()])
+    first = StringField('First', validators=[DataRequired()])
+    last = StringField('Last', validators=[DataRequired()])
+    class_subject = SelectField('Subject', validators=[DataRequired()])
+    class_block = SelectField('Block', choices=['A', 'B', 'C'], validators=[DataRequired()])
+    submit = SubmitField('Add Student')

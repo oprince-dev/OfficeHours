@@ -105,6 +105,14 @@ body {
   overflow-y: scroll;
 }
 
+#studentFilterBody tr:hover {
+  cursor: pointer;
+}
+
+#studentInfoTable {
+  width:35%;
+}
+
 .table.sticky th {
   background-color: #171a1c;
   position: sticky;

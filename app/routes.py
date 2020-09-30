@@ -1,5 +1,6 @@
 from app import app, db
-from app.models import Classroom, Student, Teacher, classroom_student_link
+from app.models import  Student, Subject, Block, Teacher, student_block
+from app.forms import TeacherRegisterForm, StudentRegisterForm, AddStudentForm
 from flask import render_template, url_for, redirect, flash, jsonify, request
 from sqlalchemy import or_
 
@@ -51,34 +52,21 @@ def students():
     if request.args:
         args = request.args
 
-        if "sort" in args:
-            classroom_id = args["class"]
-            sort_term = args["sort"]
-            acceptable_query = {"id": Student.student_id,
-                                "first": Student.first_name,
-                                "last": Student.last_name}
-            order = acceptable_query[sort_term]
-            if sort_term in acceptable_query:
-                if classroom_id == '0':
-                    cs = Classroom.query.all()
-                    students = Student.query.order_by(order).all()
-                    active = 0
-                else:
-                    cs = Classroom.query.filter_by(
-                            classroom_id=classroom_id
-                            ).first()
-                    students = cs.students.order_by(order)
-                    active = cs.classroom_id
-
-        elif "class" in args and args["class"] != "all":
-            classroom_id = args["class"]
-            cs = Classroom.query.filter_by(classroom_id=classroom_id).first()
-            students = cs.students
-            active = cs.classroom_id
+        if "subject" in args and args["subject"] != "0":
+            subject_id = args["subject"]
+            if "block" in args:
+                block_title = args["block"]
+                block = Block.query.filter_by(subject_id=subject_id, title=block_title).first()
+                students = block.students
+                active = subject_id
+            else:
+                block = Block.query.filter_by(subject_id=subject_id).all()
+                students = Student.query.all()
+                active = subject_id
 
         elif "search" in args:
             name_query = args["search"]
-            cs = Classroom.query.all()
+            block = Block.query.all()
             students = Student.query.filter(or_(
                     Student.first_name.like(name_query),
                     Student.last_name.like(name_query)
@@ -86,26 +74,55 @@ def students():
             active = 0
 
         else:
-            cs = Classroom.query.all()
+            block = Block.query.all()
             students = Student.query.all()
             active = 0
     else:
-        cs = Classroom.query.all()
+        block = Block.query.all()
         students = Student.query.all()
         active = 0
 
-    classes_tabs = Classroom.query.all()
+    subjects = Subject.query.all()
 
     return render_template('students.html',
-                           classes_tabs=classes_tabs,
-                           cs=cs,
+                           subjects=subjects,
+                           block=block,
                            students=students,
                            active=active)
 
-@app.route("/add/student", methods=['GET', 'POST'])
-def add_student():
+@app.route("/append/student", methods=['GET', 'POST'])
+def append_student():
+    subjects = Subject.query.all()
     students = Student.query.all()
-    return render_template('add_student.html', students=students)
+    addStudentform = AddStudentForm()
+    addStudentform.class_subject.choices = [(subject.id, subject.title) for subject in subjects]
+
+    if addStudentform.validate_on_submit():
+        subject_id = addStudentform.class_subject.data
+        subject = Subject.query.filter_by(id=subject_id).first()
+        block_title = addStudentform.class_block.data
+        block = Block.query.filter_by(subject_id=subject_id, title=block_title).first()
+        student = Student.query.filter_by(id=addStudentform.student_id.data).first()
+        block.students.append(student)
+        db.session.add(block)
+        db.session.commit()
+
+    return render_template('append_student.html', students=students, form=addStudentform)
+
+@app.route("/edit", methods=['GET', 'POST'])
+def edit_student():
+    if request.args:
+        args = request.args
+        student_id = args["s"]
+        if "d" in args:
+            block_id = args["d"]
+            block = Block.query.filter_by(id=block_id).first()
+            student = Student.query.filter_by(id=student_id).first()
+            block.students.remove(student)
+            db.session.commit()
+
+        student = Student.query.filter_by(id=student_id).first()
+    return render_template('edit_student.html', student=student)
 
 @app.route("/assignments")
 def assignments():
