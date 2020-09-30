@@ -1,4 +1,5 @@
 from app import app
+from app.models import Teacher
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, PasswordField, SubmitField, BooleanField, Form, FormField, FieldList
 from wtforms.validators import DataRequired, ValidationError
@@ -42,6 +43,12 @@ class StudentRegisterForm(FlaskForm):
         existing_email = Student.query.filter_by(email=email.data).first()
         if existing_email:
             raise ValidationError('Email already exists.')
+
+class LoginForm(FlaskForm):
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Sign In')
 
 class AddStudentForm(FlaskForm):
     student_id = StringField('ID', validators=[DataRequired()])

@@ -1,8 +1,13 @@
-from app import db
+from app import db, login_manager
+from flask_login import UserMixin
 
 """
     Models
 """
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Teacher.query.get(user_id)
 
 student_block = db.Table('student_block',
         db.Column('student_id', db.Integer, db.ForeignKey('student.id')),
@@ -41,7 +46,7 @@ class Block(db.Model):
         return f"Block('{self.id}', '{self.subject_id}', '{self.teacher_id}', '{self.title}')"
 
 
-class Teacher(db.Model):
+class Teacher(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(4), nullable=True)
     first_name = db.Column(db.String(30), nullable=False)

@@ -1,9 +1,10 @@
 {% block leftnav %}
+{% if current_user.is_authenticated %}
 <div class="wrapper" id="leftnav-wrapper">
   <nav class="leftnav">
     <div class="navbar-header">
-      <h4>Teacher</h4>
-      <h6>teacher@email.com</h6>
+      <h4>{{ current_user.first_name }} {{ current_user.last_name }}</h4>
+      <h6>{{ current_user.email }}</h6>
     </div>
     <div class="nav-menu">
       <ul class="navbar-nav list-unstyled">
@@ -26,4 +27,5 @@
     </div>
   </nav>
 </div>
+{% endif %}
 {% endblock leftnav %}
