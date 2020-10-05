@@ -1,71 +1,124 @@
+:root {
+  font-size: 16px;
+  --text-primary: #282828;
+  --text-secondary: #818c92;
+  --border-color: #adb4b8;
+  --sidebar-primary: #fff;
+  --bg-primary: #f0f3f7;
+  --link-primary: #0b79a8;
+  --link-secondary: #64C9F5;
+  --link-tertiary: #212529;
+  --transition-speed: 100ms;
+}
+
+body {
+  background-color: var(--bg-primary);
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.container {
+  padding: 0 30px;
+}
+
 @media (min-width: 768px) {
     .content {
-        margin-left:200px;
+        margin-left:250px;
     }
 
     .leftnav {
       position: fixed;
-      width: 200px;
+      width: 250px;
       height: 100%;
       top: 0;
       left: 0;
     }
 }
+#leftnav-icons-pane {
+  float: left;
+}
+#leftnav-icons-pane li {
+  width: 50px;
+  height: 50px;
+  background-color: var(--bg-primary);
+  display: flex;
+  justify-content: center;
+}
+#leftnav-icons-pane li.active {
+  background-color: var(--sidebar-primary);
+  border: none;
+}
+
+
+#leftnav-icons-pane a {
+  text-align: center;
+}
+
+#leftnav-submenu-pane {
+  margin-left: 50px;
+  padding: 15px 20px;
+}
+
+#leftnav-submenu-pane ul li {
+  padding: 5px 0;
+}
+
+.topnav {
+  background-color: white;
+  box-shadow: 0px -1px 10px var(--border-color);
+}
+
 .leftnav {
-  background-color: #212529;
+  background-color: var(--sidebar-primary);
   height: 100%;
   top: 56px;
   left: 0;
+  box-shadow: -1px 0px 10px var(--border-color);
 }
-.leftnav a {
-  color: #64C9F5;
-}
+
 .leftnav a:hover {
-  color: #212529;
   text-decoration: none;
 }
 .navbar-header {
   padding: 20px 20px;
+  border-bottom: 1px solid var(--bg-primary);
 }
 .leftnav .nav-item {
-  padding-left: 15px;
-}
-.leftnav .nav-link {
-  padding: 15px 0;
-}
-.leftnav .nav-item:hover {
-  background-color: #edeeef;
+  border: 1px solid var(--bg-primary);
 }
 
-main {
-  background-color: #0f1112;
-  color: lightgrey;
+#leftnav-icons-pane .nav-item:hover {
+  background-color: var(--bg-secondary);
+  border: none;
 }
-body {
-  background-color: #0f1112;
-  color: lightgrey;
+
+#leftnav-icons-pane ul li {
+  list-style: none;
 }
 
 .studentsTable {
-  color: lightgrey;
+  color: var(--text-primary);
 }
 
+.studentsTable tbody tr:hover {
+  background-color: var(--bg-primary);
+}
+
+.nav-tabs {
+  border-bottom: none;
+}
 
 .tableTabs {
   width: 100%;
-}
-
-.tableTabs .navbar {
   padding: 0;
-}
-
-.tableTabs a {
-  color: lightgrey;
 }
 
 .tableTabs .nav-link {
   padding: .8rem 1rem;
 }
+
 
 #th_id {
   width: 10%;
@@ -84,10 +137,6 @@ body {
   margin: 0 4rem;
 }
 
-#topnav {
-  margin-bottom: 25px;
-}
-
 #studentSearchBar {
   margin: auto 10px;
 }
@@ -101,7 +150,7 @@ body {
 }
 
 #studentFilterContainer {
-  height: 300px;
+  height: 80%;
   overflow-y: scroll;
 }
 
@@ -109,12 +158,29 @@ body {
   cursor: pointer;
 }
 
-#studentInfoTable {
-  width:35%;
-}
 
-.table.sticky th {
+.table .sticky th {
   background-color: #171a1c;
   position: sticky;
   top: -1;
+}
+
+.leftnav .nav-link.active {
+  background-color: pink;
+}
+
+
+#leftnav-submenu-pane > .leftnav-submenu {
+  display: none;
+}
+#leftnav-submenu-pane > .leftnav-submenu:first-child {
+  display: block;
+}
+
+.submenu-pane {
+  margin-bottom: 1rem;
+}
+
+.leftnav-submenu ul {
+  margin-left: 1rem;
 }

@@ -1,0 +1,65 @@
+{% extends "index.html" %}
+{% include "nav/topnav.html" %}
+{% include "nav/leftnav.html" %}
+
+{% block body %}
+<div class="container mt-4">
+  <div class="row headerRow mb-3">
+    <div class="col-md-12">
+      <h5>Assignments</h5>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <nav class="navbar tableTabs">
+            <ul class="nav">
+              <li class="nav-item">
+                <a href="{{ url_for('assignments') }}" class="nav-link active">All</a>
+              </li>
+              {% for block in blocks %}
+              <li class="nav-item">
+                <a href="{{ url_for('assignments', subject=block.subject.id, block=block.title) }}" class="nav-link">{{ block.subject.title }} {{ block.title }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+            <div class="dropdown show">
+              <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Week
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                {% for week in weeks %}
+                  <a class="dropdown-item" href="{{ url_for('assignments', wk=1) }}">{{ week.week_number }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if weeks %}
+  {% for week in weeks %}
+  <div class="row mb-2">
+    <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-md-4">Assignment 1</div>
+              <div class="col-md-4">Week {{ week.week_number }}</div>
+              <div class="col-md-4">{{ week.block.subject.title }} {{ week.block.title }}</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo suscipit temporibus vitae perferendis corporis consectetur odit culpa rem, excepturi doloribus reprehenderit quis aut natus hic. Neque repellendus, eum nesciunt ducimus?</div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>
+{% endblock body %}

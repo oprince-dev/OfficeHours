@@ -1,0 +1,133 @@
+{% block leftnav %}
+{% if current_user.is_authenticated %}
+<div class="wrapper" id="leftnav-wrapper">
+  <nav class="leftnav">
+    <div class="navbar-header">
+      <h4>{{ current_user.first_name }} {{ current_user.last_name }}</h4>
+      <h6>{{ current_user.email }}</h6>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="navbar-nav list-unstyled" id="leftnav-icons-pane">
+          <li class="nav-item" id="classes-item">
+            <img src="{{ url_for('static', filename='icons/person-24.svg') }}" class="nav-icon" alt="Classes">
+          </li>
+          <li class="nav-item" id="week-item">
+            <img src="{{ url_for('static', filename='icons/repo-24.svg') }}" class="nav-icon" alt="Classes">
+          </li>
+          <li class="nav-item" id="whiteboard-item">
+            <img src="{{ url_for('static', filename='icons/note-24.svg') }}" class="nav-icon" alt="Classes">
+          </li>
+          <li class="nav-item" id="onlineroom-item">
+            <img src="{{ url_for('static', filename='icons/device-camera-video-24.svg') }}" class="nav-icon" alt="Classes">
+          </li>
+          <li class="nav-item" id="helpdesk-item">
+            <img src="{{ url_for('static', filename='icons/question-24.svg') }}" class="nav-icon" alt="Classes">
+          </li>
+        </ul>
+        <div id="leftnav-submenu-pane">
+          <div class="leftnav-submenu" id="classes-pane">
+            <div class="submenu-pane" id="classes-submenu">
+              <h5 class=""><a href="{{ url_for('students')}}">Classes</a></h5>
+              <ul class="navbar-nav list-unstyled">
+                {% for block in blocks %}
+                <li class="">
+                  <a href="{{ url_for('students', subject=block.subject.id, block=block.title) }}" class="">{{ block.subject.title }} {{ block.title }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            <div class="submenu-pane" id="students-submenu">
+              <h5 class=""><a href="{{ url_for('students')}}">Students</a></h5>
+              <ul class="navbar-nav list-unstyled">
+                <li class="">
+                  <a href="{{ url_for('add_student',) }}">Add Student</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="leftnav-submenu" id="week-pane">
+            <div class="submenu-pane" id="week-submenu">
+              <h5><a href="{{ url_for('weeks') }}">Weeks</a></h5>
+              <ul class="navbar-nav list-unstyled">
+                <li>
+                  <a href="{{ url_for('new_week') }}">New Week</a>
+                </li>
+              </ul>
+            </div>
+            <div class="submenu-pane" id="assignment-submenu">
+              <h5><a href="{{ url_for('assignments') }}">Assignments</a></h5>
+              <ul class="navbar-nav list-unstyled">
+                <li>
+                  <a href="{{ url_for('new_assignment') }}">New Assignment</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="leftnav-submenu" id="whiteboard-pane">
+            <h5><a href="{{ url_for('whiteboard') }}">Whiteboard</a></h5>
+            <ul class="navbar-nav list-unstyled">
+              <li>
+                <a href="{{ url_for('whiteboard') }}">1</a>
+              </li>
+              <li>
+                <a href="{{ url_for('whiteboard') }}">2</a>
+              </li>
+              <li>
+                <a href="{{ url_for('whiteboard') }}">3</a>
+              </li>
+            </ul>
+          </div>
+          <div class="leftnav-submenu" id="onlineroom-pane">
+            <h5><a href="{{ url_for('onlineroom') }}">Online Room</a></h5>
+            <ul class="navbar-nav list-unstyled">
+              <li>
+                <a href="{{ url_for('onlineroom') }}">1</a>
+              </li>
+              <li>
+                <a href="{{ url_for('onlineroom') }}">2</a>
+              </li>
+              <li>
+                <a href="{{ url_for('onlineroom') }}">3</a>
+              </li>
+            </ul>
+          </div>
+          <div class="leftnav-submenu" id="helpdesk-pane">
+            <h5><a href="{{ url_for('helpdesk') }}">Help Desk</a></h5>
+            <ul class="navbar-nav list-unstyled">
+              <li>
+                <a href="{{ url_for('helpdesk') }}">1</a>
+              </li>
+              <li>
+                <a href="{{ url_for('helpdesk') }}">2</a>
+              </li>
+              <li>
+                <a href="{{ url_for('helpdesk') }}">3</a>
+              </li>
+            </ul>
+          </div>
+          <!-- <ul class="navbar-nav list-unstyled" id="leftnav-submenu-pane">
+            <li class="nav-item">
+              <a href="{{ url_for('students', subject=0) }}" class="nav-link">Students</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url_for('assignments') }}" class="nav-link">Assignments</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Whiteboard</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Online Room</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Help Desk</a>
+            </li>
+          </ul> -->
+        </div>
+      </div>
+    </div>
+  </nav>
+
+</div>
+{% endif %}
+{% endblock leftnav %}

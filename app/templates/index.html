@@ -10,7 +10,7 @@
   <body>
     {% block topnav %}{% endblock topnav %}
     {% block leftnav %}{% endblock leftnav %}
-    <div class="container">
+    <div class="content">
       {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
           {% for category, message in messages %}
@@ -26,5 +26,5 @@
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}" charset="utf-8"></script>
   <script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.js') }}" charset="utf-8"></script>
-  {% block script %}{% endblock script %}
+  <script src="{{ url_for('static', filename='js/main.js') }}" charset="utf-8"></script>
 </html>

@@ -1,0 +1,38 @@
+{% extends "index.html" %}
+{% include "nav/topnav.html" %}
+
+{% block body %}
+<div class="container" id="registerContainer">
+  <!-- Teacher Registration Form -->
+  <form class="tab-pane active" method="post">
+    {{ form.hidden_tag() }}
+    <h2>{{ title }} Registration</h2>
+    <div class="form-group">
+      {{ form.first(
+            placeholder=form.first.label.text,
+            class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.last(
+            placeholder=form.last.label.text,
+            class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.email(
+            placeholder=form.email.label.text,
+            class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.password(
+            placeholder=form.password.label.text,
+            class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.password_confirm(
+            placeholder=form.password_confirm.label.text,
+            class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
+</div>
+{% endblock body %}

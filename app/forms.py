@@ -1,7 +1,8 @@
 from app import app
 from app.models import Teacher
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, PasswordField, SubmitField, BooleanField, Form, FormField, FieldList
+from wtforms import StringField, SelectField, PasswordField, SubmitField, BooleanField, TextAreaField, Form, FormField, FieldList
+from wtforms.fields.html5 import DateField, IntegerField
 from wtforms.validators import DataRequired, ValidationError
 from wtforms.validators import Email, EqualTo, Length
 
@@ -46,8 +47,8 @@ class StudentRegisterForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField('Email',
-                        validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+                        validators=[DataRequired("Email Required"), Email()])
+    password = PasswordField('Password', validators=[DataRequired("Password Required"), Length(min=3, max=20)])
     submit = SubmitField('Sign In')
 
 class AddStudentForm(FlaskForm):
@@ -57,3 +58,17 @@ class AddStudentForm(FlaskForm):
     class_subject = SelectField('Subject', validators=[DataRequired()])
     class_block = SelectField('Block', choices=['A', 'B', 'C'], validators=[DataRequired()])
     submit = SubmitField('Add Student')
+
+class AddWeekForm(FlaskForm):
+    block = SelectField('Block', validators=[DataRequired()])
+    week_number = IntegerField('Week', validators=[DataRequired()])
+    start_date = DateField('Start Date', validators=[DataRequired()])
+    end_date = DateField('End Date', validators=[DataRequired()])
+    submit = SubmitField('Add Week')
+
+class AddAssignmentForm(FlaskForm):
+    block = SelectField('Block', validators=[DataRequired()])
+    week_number = SelectField('Week', validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    submit = SubmitField('Add Assignment')
