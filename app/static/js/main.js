@@ -30,3 +30,21 @@ $(function() {
     $('#helpdesk-pane').show();
   });
 });
+$(function() {
+  $("#studentFilterInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#studentFilterBody tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+$(function() {
+  $("#studentFilterBody > tr").on("click", function() {
+    var id = $(this).find("td:eq(0)").text()
+    var first = $(this).find("td:eq(1)").text()
+    var last = $(this).find("td:eq(2)").text()
+    $("#addStudentForm > div.form-group > input#student_id").val(id)
+    $("#addStudentForm > div.form-group > input#first").val(first)
+    $("#addStudentForm > div.form-group > input#last").val(last)
+  });
+});

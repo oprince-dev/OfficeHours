@@ -1,0 +1,90 @@
+{% extends "index.html" %}
+{% include "nav/topnav.html" %}
+{% include "nav/leftnav.html" %}
+
+{% block body %}
+<div class="row headerRow mb-3">
+  <div class="col-md-12">
+    <h5>Classes</h5>
+  </div>
+</div>
+<div class="row studentsTableRow mb-4">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <nav class="navbar tableTabs">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a href="{{ url_for('classes') }}" class="nav-link active">All</a>
+            </li>
+            {% if blocks %}
+            {% for block in blocks %}
+            <li class="nav-item">
+              <a href="{{ url_for('classes', subject=block.subject.id, block=block.title) }}" class="nav-link">{{ block.subject.title }} - {{ block.title }}</a>
+            </li>
+            {% endfor %}
+            {% endif %}
+          </ul>
+        </nav>
+        <table class="table table-hover table-sortable studentsTable">
+          <thead class="">
+            <tr>
+              <th id=""></th>
+              <th id="">
+                <a href="">ID</a>
+              </th>
+              <th id="">
+                <a href="">Subject</a>
+              </th>
+              <th id="">
+                <a href="">Block</a>
+              </th>
+              <th id="">
+                <a href="">Enrolled</a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if selected_block %}
+            <tr>
+              <td></td>
+              <td>
+                {{ selected_block.id }}
+              </td>
+              <td>
+                {{ selected_block.subject.title }}
+              </td>
+              <td>
+                {{ selected_block.title }}
+              </td>
+              <td>
+                {{ selected_block.students|length }}
+              </td>
+            </tr>
+            {% else %}
+            {% for block in blocks %}
+            <tr>
+              <td></td>
+              <td>
+                {{ block.id }}
+              </td>
+              <td>
+                {{ block.subject.title }}
+              </td>
+              <td>
+                {{ block.title }}
+              </td>
+              <td>
+                {{ block.students|length }}
+              </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% include "class_student_cards.html" %}
+{% endblock body %}

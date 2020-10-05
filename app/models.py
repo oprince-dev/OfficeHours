@@ -59,6 +59,7 @@ class Block(db.Model):
         return f"Block(id='{self.id}', subject_id='{self.subject_id}', teacher_id='{self.teacher_id}', title='{self.title}')"
 
 class Week(db.Model):
+    __table_args__ = (db.UniqueConstraint('block_id', 'week_number', name='_block_week_uc'),)
     id = db.Column(db.Integer, primary_key=True)
     block_id = db.Column(db.Integer, db.ForeignKey('block.id'))
     week_number = db.Column(db.Integer, nullable=False)
@@ -72,6 +73,9 @@ class Week(db.Model):
 class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     week_id = db.Column(db.Integer, db.ForeignKey('week.id'))
+    title = db.Column(db.String(30))
+    description = db.Column(db.String(300))
+
 
     def __repr__(self):
-        return f"Asssignment(id='{self.id}', week_id='{week_id}')"
+        return f"Asssignment(id='{self.id}', week_id='{self.week_id}')"

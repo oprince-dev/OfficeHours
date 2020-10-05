@@ -1,5 +1,4 @@
 {% block leftnav %}
-{% if current_user.is_authenticated %}
 <div class="wrapper" id="leftnav-wrapper">
   <nav class="leftnav">
     <div class="navbar-header">
@@ -28,20 +27,29 @@
         <div id="leftnav-submenu-pane">
           <div class="leftnav-submenu" id="classes-pane">
             <div class="submenu-pane" id="classes-submenu">
-              <h5 class=""><a href="{{ url_for('students')}}">Classes</a></h5>
+              <h5 class=""><a href="{{ url_for('classes')}}">Classes</a></h5>
               <ul class="navbar-nav list-unstyled">
                 {% for block in blocks %}
                 <li class="">
-                  <a href="{{ url_for('students', subject=block.subject.id, block=block.title) }}" class="">{{ block.subject.title }} {{ block.title }}</a>
+                  <a href="{{ url_for('classes', subject=block.subject.id, block=block.title) }}" class="">{{ block.subject.title }} - {{ block.title }}</a>
                 </li>
                 {% endfor %}
+                <li class="plus-link">
+                  <a href="{{ url_for('new_class',) }}">
+                    <img src="{{ url_for('static', filename='icons/plus-16.svg') }}" class="" alt="New Class">
+                    New Class
+                  </a>
+                </li>
               </ul>
             </div>
             <div class="submenu-pane" id="students-submenu">
               <h5 class=""><a href="{{ url_for('students')}}">Students</a></h5>
               <ul class="navbar-nav list-unstyled">
-                <li class="">
-                  <a href="{{ url_for('add_student',) }}">Add Student</a>
+                <li class="plus-link">
+                  <a href="{{ url_for('add_student',) }}">
+                    <img src="{{ url_for('static', filename='icons/plus-16.svg') }}" class="" alt="Add Student">
+                    Add Student
+                  </a>
                 </li>
               </ul>
             </div>
@@ -50,16 +58,22 @@
             <div class="submenu-pane" id="week-submenu">
               <h5><a href="{{ url_for('weeks') }}">Weeks</a></h5>
               <ul class="navbar-nav list-unstyled">
-                <li>
-                  <a href="{{ url_for('new_week') }}">New Week</a>
+                <li class="plus-link">
+                  <a href="{{ url_for('new_week') }}">
+                    <img src="{{ url_for('static', filename='icons/plus-16.svg') }}" class="" alt="New Week">
+                    New Week
+                  </a>
                 </li>
               </ul>
             </div>
             <div class="submenu-pane" id="assignment-submenu">
               <h5><a href="{{ url_for('assignments') }}">Assignments</a></h5>
               <ul class="navbar-nav list-unstyled">
-                <li>
-                  <a href="{{ url_for('new_assignment') }}">New Assignment</a>
+                <li class="plus-link">
+                  <a href="{{ url_for('new_assignment') }}">
+                    <img src="{{ url_for('static', filename='icons/plus-16.svg') }}" class="" alt="New Assignment">
+                    New Assignment
+                  </a>
                 </li>
               </ul>
             </div>
@@ -129,5 +143,4 @@
   </nav>
 
 </div>
-{% endif %}
 {% endblock leftnav %}

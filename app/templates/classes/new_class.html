@@ -5,7 +5,7 @@
 {% block body %}
 <div class="row headerRow mb-3">
   <div class="col-md-12">
-    <h5>New Week</h5>
+    <h5>New Class</h5>
   </div>
 </div>
 <div class="row mb-2">
@@ -14,24 +14,18 @@
       <div class="card-body">
         <form class="form" method="post">
           {{ form.hidden_tag() }}
+          <div class="row mb-3">
+            <div class="col-md-2">
+              {{ form.subject.label }}
+              {{ form.subject(class="form-control") }}
+            </div>
+            <div class="col-md-2">
+              {{ form.title.label }}
+              {{ form.title(class="form-control", min=1) }}
+            </div>
+          </div>
           <div class="row">
-            <div class="col-md-2">
-              {{ form.block.label }}
-              {{ form.block(class="form-control") }}
-            </div>
-            <div class="col-md-2">
-              {{ form.week_number.label }}
-              {{ form.week_number(class="form-control", min=1) }}
-            </div>
-            <div class="col-md-3">
-              {{ form.start_date.label }}
-              {{ form.start_date(class="form-control") }}
-            </div>
-            <div class="col-md-3">
-              {{ form.end_date.label }}
-              {{ form.end_date(class="form-control") }}
-            </div>
-            <div class="col-md-2">
+            <div class="col-md-12">
               {{ form.submit(class="btn btn-primary") }}
             </div>
           </div>
@@ -40,4 +34,5 @@
     </div>
   </div>
 </div>
+{% include "class_student_cards.html" %}
 {% endblock %}

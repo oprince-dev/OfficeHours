@@ -51,7 +51,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired("Password Required"), Length(min=3, max=20)])
     submit = SubmitField('Sign In')
 
-class AddStudentForm(FlaskForm):
+class AppendStudentForm(FlaskForm):
     student_id = StringField('ID', validators=[DataRequired()])
     first = StringField('First', validators=[DataRequired()])
     last = StringField('Last', validators=[DataRequired()])
@@ -59,16 +59,21 @@ class AddStudentForm(FlaskForm):
     class_block = SelectField('Block', choices=['A', 'B', 'C'], validators=[DataRequired()])
     submit = SubmitField('Add Student')
 
-class AddWeekForm(FlaskForm):
+class NewBlockForm(FlaskForm):
+    subject = StringField('Subject', validators=[DataRequired()])
+    title = SelectField('Title', choices=["A", "B", "C", "D", "E", "F"], validators=[DataRequired()])
+    submit = SubmitField('Add Class')
+
+class NewWeekForm(FlaskForm):
     block = SelectField('Block', validators=[DataRequired()])
     week_number = IntegerField('Week', validators=[DataRequired()])
     start_date = DateField('Start Date', validators=[DataRequired()])
     end_date = DateField('End Date', validators=[DataRequired()])
     submit = SubmitField('Add Week')
 
-class AddAssignmentForm(FlaskForm):
+class NewAssignmentForm(FlaskForm):
     block = SelectField('Block', validators=[DataRequired()])
-    week_number = SelectField('Week', validators=[DataRequired()])
+    week_number = IntegerField('Week', validators=[DataRequired()])
     title = StringField('Title', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     submit = SubmitField('Add Assignment')

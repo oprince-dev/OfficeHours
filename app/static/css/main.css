@@ -184,3 +184,7 @@ a:hover {
 .leftnav-submenu ul {
   margin-left: 1rem;
 }
+
+.plus-link img {
+  padding-bottom: 4px;
+}

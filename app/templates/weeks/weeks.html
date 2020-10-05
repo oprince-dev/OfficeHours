@@ -3,77 +3,76 @@
 {% include "nav/leftnav.html" %}
 
 {% block body %}
-<div class="container mt-4">
-  <div class="row headerRow mb-3">
-    <div class="col-md-12">
-      <h5>Weeks</h5>
-    </div>
+<div class="row headerRow mb-3">
+  <div class="col-md-12">
+    <h5>Weeks</h5>
   </div>
-  <div class="row mb-4">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
-          <nav class="navbar tableTabs">
-            <ul class="nav">
-              <li class="nav-item">
-                <a href="{{ url_for('weeks')}}" class="nav-link active">All</a>
-              </li>
-              {% for block in blocks %}
-              <li class="nav-item">
-                <a href="{{ url_for('weeks', subject=block.subject.id, block=block.title) }}" class="nav-link">{{ block.subject.title }} {{ block.title }}</a>
-              </li>
-              {% endfor %}
-            </ul>
-            <div class="dropdown show">
-              <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Week
-              </a>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="">Week 1</a>
-              </div>
+</div>
+<div class="row mb-4">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <nav class="navbar tableTabs">
+          <ul class="nav">
+            <li class="nav-item">
+              <a href="{{ url_for('weeks')}}" class="nav-link active">All</a>
+            </li>
+            {% for block in blocks %}
+            <li class="nav-item">
+              <a href="{{ url_for('weeks', subject=block.subject.id, block=block.title) }}" class="nav-link">{{ block.subject.title }} {{ block.title }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+          <div class="dropdown show">
+            <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Week
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="">Week 1</a>
             </div>
-          </nav>
-        </div>
+          </div>
+        </nav>
       </div>
     </div>
   </div>
-  {% if weeks %}
-    {% for week in weeks %}
-    <div class="row mb-2">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">
-            <div class="row">
-              <div class="col-md-4">Week {{ week.week_number }}</div>
-              <div class="col-md-4">{{ week.block.subject.title }} {{ week.block.title }}</div>
-              <div class="col-md-4">({{ week.start_date }}) - ({{ week.end_date }})</div>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-12">
-                Assignments: 0
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  {% else %}
+</div>
+{% if weeks %}
+  {% for week in weeks %}
   <div class="row mb-2">
     <div class="col-md-12">
       <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-4">Week {{ week.week_number }}</div>
+            <div class="col-md-4">{{ week.block.subject.title }} {{ week.block.title }}</div>
+            <div class="col-md-4">({{ week.start_date }}) - ({{ week.end_date }})</div>
+          </div>
+        </div>
         <div class="card-body">
           <div class="row">
             <div class="col-md-12">
-              None
+              Assignments: {{ week.assignments }}
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  {% endif %}
+  {% endfor %}
+{% else %}
+<div class="row mb-2">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+            None
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+{% endif %}
+{% include "week_assignment_cards.html" %}
 {% endblock body %}
