@@ -1,0 +1,69 @@
+{% extends "index.html" %}
+{% include "nav/topnav.html" %}
+{% include "nav/leftnav.html" %}
+
+{% block body %}
+<div class="row headerRow mb-3">
+  <div class="col-md-12">
+    <h5>Edit Class</h5>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <div class="card mb-4">
+      <div class="card-header">Class Info</div>
+      <div class="card-body">
+        <form method="post">
+          {{ form.hidden_tag() }}
+          <div class="">
+            ID: {{ selected_block.id }}
+          </div>
+          <div class="form-group">
+            {{ form.class_subject.label }}:
+            {{ form.class_subject(value=selected_block.subject.title, class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ form.class_block.label }}:
+            {{ form.class_block(value=selected_block.title, class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ form.submit(placeholder=form.submit.label.text,
+              class="btn btn-primary form-control") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">Students</div>
+      <div class="card-body">
+        <table class="table table-hover editStudentTable" id="studentClassesTable">
+          <thead class="">
+            <th>ID</th>
+            <th>First</th>
+            <th>Last</th>
+            <th></th>
+          </thead>
+          <tbody>
+            {% for student in selected_block.students %}
+            <tr>
+              <td>{{ student.id }}</td>
+              <td>{{ student.first_name }}</td>
+              <td>{{ student.last_name }}</td>
+              <td>
+                <a href="{{ url_for('edit_class', b=selected_block.id, d=student.id) }}">
+                  <img src="{{ url_for('static', filename='icons/trashcan-16.svg') }}" class="" alt="Remove Student">
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

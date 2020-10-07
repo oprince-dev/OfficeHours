@@ -7,4 +7,6 @@ bootstrap.js
 bootstrap.js.map
 jquery.min.js
 popper.min.js
+popper.min.js.map
 icons
+site.db

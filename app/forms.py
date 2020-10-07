@@ -59,19 +59,19 @@ class AppendStudentForm(FlaskForm):
     class_block = SelectField('Block', choices=['A', 'B', 'C'], validators=[DataRequired()])
     submit = SubmitField('Add Student')
 
-class NewBlockForm(FlaskForm):
-    subject = StringField('Subject', validators=[DataRequired()])
-    title = SelectField('Title', choices=["A", "B", "C", "D", "E", "F"], validators=[DataRequired()])
+class BlockForm(FlaskForm):
+    class_subject = StringField('Subject', validators=[DataRequired()])
+    class_block = SelectField('Block', choices=["A", "B", "C", "D", "E", "F"], validators=[DataRequired()])
     submit = SubmitField('Add Class')
 
-class NewWeekForm(FlaskForm):
+class WeekForm(FlaskForm):
     block = SelectField('Block', validators=[DataRequired()])
     week_number = IntegerField('Week', validators=[DataRequired()])
     start_date = DateField('Start Date', validators=[DataRequired()])
     end_date = DateField('End Date', validators=[DataRequired()])
     submit = SubmitField('Add Week')
 
-class NewAssignmentForm(FlaskForm):
+class AssignmentForm(FlaskForm):
     block = SelectField('Block', validators=[DataRequired()])
     week_number = IntegerField('Week', validators=[DataRequired()])
     title = StringField('Title', validators=[DataRequired()])

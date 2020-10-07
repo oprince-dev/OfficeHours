@@ -5,7 +5,12 @@
 {% block body %}
 <div class="row headerRow mb-3">
   <div class="col-md-12">
-    <h5>Assignments</h5>
+    <h5>
+      <a href="{{ url_for('assignments') }}">Assignments</a>
+      {% if selected_block %}
+        / {{ selected_block.subject.title }} - {{ selected_block.title }}
+      {% endif %}
+    </h5>
   </div>
 </div>
 <div class="row mb-4">
@@ -19,7 +24,7 @@
             </li>
             {% for block in blocks %}
             <li class="nav-item">
-              <a href="{{ url_for('assignments', subject=block.subject.id, block=block.title) }}" class="nav-link">{{ block.subject.title }} {{ block.title }}</a>
+              <a href="{{ url_for('assignments', b=block.id) }}" class="nav-link">{{ block.subject.title }} {{ block.title }}</a>
             </li>
             {% endfor %}
           </ul>
@@ -39,24 +44,41 @@
   </div>
 </div>
 {% if assignments %}
-{% for assignment in assignments %}
-<div class="row mb-2">
-  <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-md-4">{{ assignment.title }}</div>
+  {% for assignment in assignments %}
+  <div class="row mb-2">
+    <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-md-8">{{ assignment.title }}</div>
+              <div class="col-md-2">{{ assignment.week.block.subject.title }} - {{ assignment.week.block.title }}</div>
+              <div class="col-md-1">Week: {{ assignment.week.week_number }}</div>
+              <div class="col-md-1">
+                <a href="{{ url_for('edit_assignment', a=assignment.id) }}">
+                  <img src="{{ url_for('static', filename='icons/pencil-16.svg') }}" class="" alt="Edit Assignment">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">{{ assignment.description }}</div>
+            </div>
           </div>
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-12">{{ assignment.description }}</div>
-          </div>
-        </div>
-      </div>
+    </div>
   </div>
-</div>
-{% endfor %}
+  {% endfor %}
+{% else %}
+ <div class="row mb-2">
+   <div class="col-md-12">
+     <div class="card">
+       <div class="card-header">
+         None
+       </div>
+     </div>
+   </div>
+ </div>
 {% endif %}
 {% include "week_assignment_cards.html" %}
 {% endblock body %}

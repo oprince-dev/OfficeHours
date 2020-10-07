@@ -1,6 +1,6 @@
 from app import app, db, bcrypt
 from app.models import  Student, Subject, Block, Teacher, Week, Assignment, student_block
-from app.forms import TeacherRegisterForm, StudentRegisterForm, LoginForm, AppendStudentForm, NewWeekForm,  NewAssignmentForm, NewBlockForm
+from app.forms import TeacherRegisterForm, StudentRegisterForm, LoginForm, AppendStudentForm, WeekForm, AssignmentForm, BlockForm
 from flask import render_template, url_for, redirect, flash, jsonify, request
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy import or_
@@ -99,10 +99,9 @@ def students():
     if request.args:
         args = request.args
 
-        if "subject" in args and "block" in args:
-            subject_id = args["subject"]
-            block_title = args["block"]
-            selected_block = Block.query.filter_by(subject_id=subject_id, title=block_title).first()
+        if "b" in args:
+            block_id = args["b"]
+            selected_block = Block.query.filter_by(id=block_id).first()
             students = selected_block.students
 
         elif "search" in args:
@@ -144,7 +143,7 @@ def add_student():
 
     return render_template('students/add_student.html', students=students, form=form)
 
-@app.route("/edit", methods=['GET', 'POST'])
+@app.route("/edit/student", methods=['GET', 'POST'])
 # @login_required
 def edit_student():
     current_user.id = 6
@@ -176,10 +175,9 @@ def classes():
     if request.args:
         args = request.args
 
-        if "subject" in args and "block" in args:
-            subject_id = args["subject"]
-            block_title = args["block"]
-            selected_block = Block.query.filter_by(subject_id=subject_id, title=block_title).first()
+        if "b" in args:
+            block_id = args["b"]
+            selected_block = Block.query.filter_by(id=block_id).first()
 
     return render_template('classes/classes.html', blocks=blocks, selected_block=selected_block)
 
@@ -188,7 +186,7 @@ def new_class():
     current_user.id = 6
     teacher = Teacher.query.filter_by(id = current_user.id).first()
     blocks = teacher.blocks
-    form = NewBlockForm()
+    form = BlockForm()
 
     if form.validate_on_submit():
         subject = Subject(title=form.subject.data)
@@ -205,7 +203,37 @@ def new_class():
 
     return render_template('classes/new_class.html', form=form)
 
+@app.route("/edit/class", methods=['GET', 'POST'])
+# @login_required
+def edit_class():
+    current_user.id = 6
+    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    blocks = teacher.blocks
+    form = BlockForm()
 
+    args = request.args
+    block_id = args["b"]
+    selected_block = Block.query.filter_by(id=block_id).first()
+    students = selected_block.students
+
+    if "d" in args:
+        student_id = args["d"]
+        student = Student.query.filter_by(id=student_id).first()
+        selected_block.students.remove(student)
+        db.session.commit()
+
+    if form.validate_on_submit():
+        selected_block.subject.title = form.class_subject.data
+        selected_block.title = form.class_block.data
+        db.session.commit()
+
+        return redirect(url_for('edit_class', b=selected_block.id))
+
+    return render_template('classes/edit_class.html',
+                            blocks=blocks,
+                            selected_block=selected_block,
+                            students=students,
+                            form=form)
 
 """
     Assignments
@@ -216,20 +244,19 @@ def assignments():
     current_user.id = 6
     teacher = Teacher.query.filter_by(id = current_user.id).first()
     blocks = teacher.blocks
+    selected_block = None
     weeks = Week.query.filter(Week.block.has(teacher_id=current_user.id)).all()
     assignments = Assignment.query.all()
 
     if request.args:
         args = request.args
-        if "subject" in args and "block" in args:
-            subject_id = args["subject"]
-            block_title = args["block"]
-            block = Block.query.filter_by(subject_id=subject_id, title=block_title).first()
-            assignments = Assignment.query.filter(Assignment.week.has(block_id=block.id)).all()
-            print(assignments)
+        if "b" in args:
+            block_id = args["b"]
+            selected_block = Block.query.filter_by(id=block_id).first()
+            assignments = Assignment.query.filter(Assignment.week.has(block_id=selected_block.id)).all()
 
 
-    return render_template('assignments/assignments.html', blocks=blocks, weeks=weeks, assignments=assignments)
+    return render_template('assignments/assignments.html', blocks=blocks, selected_block=selected_block, weeks=weeks, assignments=assignments)
 
 @app.route("/new/assignment", methods=['GET', 'POST'])
 # @login_required
@@ -238,20 +265,57 @@ def new_assignment():
     teacher = Teacher.query.filter_by(id = current_user.id).first()
     blocks = teacher.blocks
     weeks = Week.query.filter(Week.block.has(teacher_id=current_user.id)).all()
-    form = NewAssignmentForm()
+    form = AssignmentForm()
     form.block.choices = [(block.id, f"{block.subject.title} {block.title}") for block in teacher.blocks]
 
     if form.validate_on_submit():
         week = Week.query.filter_by(block_id=form.block.data, week_number=form.week_number.data).first()
-        assignment = Assignment(week_id=week.id,
+        assignment = Assignment(week_id=form.week_number.data,
                                 title=form.title.data,
                                 description=form.description.data)
 
-        db.session.add(assignment)
+        week.assignments.append(assignment)
         db.session.commit()
         return redirect(url_for('new_assignment'))
 
     return render_template('assignments/new_assignment.html', blocks=blocks, weeks=weeks, form=form)
+
+@app.route("/edit/assignment", methods=['GET', 'POST'])
+def edit_assignment():
+    current_user.id = 6
+    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    blocks = teacher.blocks
+    form = AssignmentForm()
+    form.block.choices = [(block.id, f"{block.subject.title} {block.title}") for block in teacher.blocks]
+
+
+    if form.validate_on_submit():
+        assignment.title = form.title.data
+        assignment.description = form.description.data
+        db.session.commit()
+
+        return redirect(url_for('assignments'))
+
+    if request.args:
+        args = request.args
+
+        if "d" in args:
+            assignment_id = args["d"]
+            Assignment.query.filter_by(id=assignment_id).delete()
+            db.session.commit()
+
+            return redirect(url_for('assignments'))
+
+        if "a" in args:
+            assignment_id = args["a"]
+            assignment = Assignment.query.filter_by(id=assignment_id).first()
+            form.block.default = assignment.week.block_id
+            form.week_number.default = assignment.week.week_number
+            form.process()
+            form.title.data = assignment.title
+            form.description.data = assignment.description
+
+    return render_template('assignments/edit_assignment.html', assignment=assignment, form=form)
 
 """
     Weeks
@@ -263,29 +327,17 @@ def weeks():
     teacher = Teacher.query.filter_by(id = current_user.id).first()
     blocks = teacher.blocks
     weeks = Week.query.filter(Week.block.has(teacher_id=current_user.id)).all()
-    form = NewWeekForm()
-    form.block.choices = [(block.id, f"{block.subject.title} {block.title}") for block in teacher.blocks]
+    selected_block = None
 
     if request.args:
         args = request.args
-        if "subject" in args and "block" in args:
-            subject_id = args["subject"]
-            block_title = args["block"]
-            weeks = Week.query.filter(Week.block.has(subject_id=subject_id, title=block_title)).all()
+        if "b" in args:
+            block_id = args["b"]
+            weeks = Week.query.filter(Week.block.has(id=block_id)).all()
+            selected_block = Block.query.filter_by(id=block_id).one()
             print(weeks)
 
-
-    if form.validate_on_submit():
-        week = Week(week_number = form.week_number.data,
-                    block_id = int(form.block.data),
-                    start_date = form.start_date.data,
-                    end_date = form.end_date.data)
-        db.session.add(week)
-        db.session.commit()
-
-        return redirect(url_for('weeks'))
-
-    return render_template('weeks/weeks.html', blocks=blocks, weeks=weeks)
+    return render_template('weeks/weeks.html', blocks=blocks, weeks=weeks, selected_block=selected_block)
 
 @app.route("/new/week", methods=['GET', 'POST'])
 # @login_required
@@ -293,7 +345,7 @@ def new_week():
     current_user.id = 6
     teacher = Teacher.query.filter_by(id = current_user.id).first()
     blocks = teacher.blocks
-    form = NewWeekForm()
+    form = WeekForm()
     form.block.choices = [(block.id, f"{block.subject.title} {block.title}") for block in teacher.blocks]
 
     if form.validate_on_submit():

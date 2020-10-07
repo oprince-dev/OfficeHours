@@ -5,12 +5,13 @@
 {% block body %}
 <div class="row headerRow mb-3">
   <div class="col-md-12">
-    <h5>Edit</h5>
+    <h5>Edit Student</h5>
   </div>
 </div>
 <div class="row">
   <div class="col-md-4">
     <div class="card mb-4">
+      <div class="card-header">Student Info</div>
       <div class="card-body">
         <table class="table table-hover editStudentTable" id="studentInfoTable">
           <tbody>
@@ -35,6 +36,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="card">
+      <div class="card-header">Classes</div>
       <div class="card-body">
         <table class="table table-hover editStudentTable" id="studentClassesTable">
           <thead class="">
@@ -51,7 +53,11 @@
               <td>{{ class.subject.title }}</td>
               <td>{{ class.title }}</td>
               <td>{{ class.teacher.first_name }} {{ class.teacher.last_name }}</td>
-              <td><a href="{{ url_for('edit_student', s=student.id, d=class.id) }}">@</a></td>
+              <td>
+                <a href="{{ url_for('edit_student', s=student.id, d=class.id) }}">
+                  <img src="{{ url_for('static', filename='icons/trashcan-16.svg') }}" class="" alt="Remove From Class">
+                </a>
+              </td>
             </tr>
             {% endfor %}
           </tbody>

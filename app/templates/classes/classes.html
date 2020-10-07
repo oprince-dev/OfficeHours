@@ -5,86 +5,143 @@
 {% block body %}
 <div class="row headerRow mb-3">
   <div class="col-md-12">
-    <h5>Classes</h5>
+    <h5>
+      <a href="{{ url_for('classes') }}">Classes</a>
+      {% if selected_block %}
+        / <a href="{{ url_for('classes', b=selected_block.id) }}">{{ selected_block.subject.title }} - {{ selected_block.title }}</a>
+      {% endif %}
+    </h5>
   </div>
 </div>
-<div class="row studentsTableRow mb-4">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-body">
-        <nav class="navbar tableTabs">
-          <ul class="nav nav-tabs">
-            <li class="nav-item">
-              <a href="{{ url_for('classes') }}" class="nav-link active">All</a>
-            </li>
-            {% if blocks %}
-            {% for block in blocks %}
-            <li class="nav-item">
-              <a href="{{ url_for('classes', subject=block.subject.id, block=block.title) }}" class="nav-link">{{ block.subject.title }} - {{ block.title }}</a>
-            </li>
-            {% endfor %}
-            {% endif %}
-          </ul>
-        </nav>
-        <table class="table table-hover table-sortable studentsTable">
-          <thead class="">
-            <tr>
-              <th id=""></th>
-              <th id="">
-                <a href="">ID</a>
-              </th>
-              <th id="">
-                <a href="">Subject</a>
-              </th>
-              <th id="">
-                <a href="">Block</a>
-              </th>
-              <th id="">
-                <a href="">Enrolled</a>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {% if selected_block %}
-            <tr>
-              <td></td>
-              <td>
-                {{ selected_block.id }}
-              </td>
-              <td>
-                {{ selected_block.subject.title }}
-              </td>
-              <td>
-                {{ selected_block.title }}
-              </td>
-              <td>
-                {{ selected_block.students|length }}
-              </td>
-            </tr>
-            {% else %}
-            {% for block in blocks %}
-            <tr>
-              <td></td>
-              <td>
-                {{ block.id }}
-              </td>
-              <td>
-                {{ block.subject.title }}
-              </td>
-              <td>
-                {{ block.title }}
-              </td>
-              <td>
-                {{ block.students|length }}
-              </td>
-            </tr>
-            {% endfor %}
-            {% endif %}
-          </tbody>
-        </table>
+{% if selected_block %}
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-6">
+              {{ selected_block.subject.title }} - {{ selected_block.title }}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <a href="{{ url_for('students', b=selected_block.id) }}">Students</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <a href="{{ url_for('assignments', b=selected_block.id) }}">Assingments</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <a href="{{ url_for('edit_class', b=selected_block.id) }}">Edit</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
+{% else %}
+  {% for class in blocks %}
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <a href="{{ url_for('classes', b=class.id) }}">
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-md-6">
+                {{ class.subject.title }} - {{ class.title }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+{% endif %}
 {% include "class_student_cards.html" %}
 {% endblock body %}
+
+
+<!-- <nav class="navbar tableTabs">
+<ul class="nav nav-tabs">
+<li class="nav-item">
+<a href="{{ url_for('classes') }}" class="nav-link active">All</a>
+</li>
+{% if blocks %}
+{% for block in blocks %}
+<li class="nav-item">
+<a href="{{ url_for('classes', subject=block.subject.id, block=block.title) }}" class="nav-link">{{ block.subject.title }} - {{ block.title }}</a>
+</li>
+{% endfor %}
+{% endif %}
+</ul>
+</nav>
+<table class="table table-hover table-sortable studentsTable">
+<thead class="">
+<tr>
+<th id=""></th>
+<th id="">
+<a href="">ID</a>
+</th>
+<th id="">
+<a href="">Subject</a>
+</th>
+<th id="">
+<a href="">Block</a>
+</th>
+<th id="">
+<a href="">Enrolled</a>
+</th>
+</tr>
+</thead>
+<tbody>
+{% if selected_block %}
+<tr>
+<td>
+<a href="{{ url_for('edit_class', b=selected_block.id) }}">
+<img src="{{ url_for('static', filename='icons/pencil-16.svg') }}" class="" alt="Edit Student">
+</a>
+</td>
+<td>
+{{ selected_block.id }}
+</td>
+<td>
+{{ selected_block.subject.title }}
+</td>
+<td>
+{{ selected_block.title }}
+</td>
+<td>
+  {{ selected_block.students|length }}
+</td>
+</tr>
+{% else %}
+{% for block in blocks %}
+<tr>
+  <td>
+    <a href="{{ url_for('edit_class', b=block.id) }}">
+      <img src="{{ url_for('static', filename='icons/pencil-16.svg') }}" class="" alt="Edit Student">
+    </a>
+  </td>
+  <td>
+    {{ block.id }}
+  </td>
+  <td>
+    {{ block.subject.title }}
+  </td>
+  <td>
+    {{ block.title }}
+  </td>
+  <td>
+    {{ block.students|length }}
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
+</tbody>
+</table> -->

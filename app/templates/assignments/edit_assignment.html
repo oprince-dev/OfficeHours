@@ -5,7 +5,9 @@
 {% block body %}
 <div class="row headerRow mb-3">
   <div class="col-md-12">
-    <h5>New Assignment</h5>
+    <h5>Edit /
+      <a href="{{ url_for('assignments', b=assignment.week.block.id) }}">{{ assignment.week.block.subject.title }} - {{ assignment.week.block.title }}</a>
+    </h5>
   </div>
 </div>
 <div class="row mb-2">
@@ -42,6 +44,7 @@
             </div>
           </div>
         </form>
+        <a href="{{url_for('edit_assignment', d=assignment.id)}}" class="btn btn-danger">Delete</a>
         {% if form.errors %}
         {{ form.errors }}
         {% endif %}
