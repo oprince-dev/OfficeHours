@@ -1,3 +1,4 @@
+/// Leftnav ///
 $(function() {
   $('#classes-item').click(function() {
     $('#leftnav-icons-pane').children().removeClass('active');
@@ -30,6 +31,8 @@ $(function() {
     $('#helpdesk-pane').show();
   });
 });
+/// Add Student ///
+// Keyup search results
 $(function() {
   $("#studentFilterInput").on("keyup", function() {
     var value = $(this).val().toLowerCase();
@@ -38,6 +41,7 @@ $(function() {
     });
   });
 });
+// Click to add to form
 $(function() {
   $("#studentFilterBody > tr").on("click", function() {
     var id = $(this).find("td:eq(0)").text()

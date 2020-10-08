@@ -33,7 +33,10 @@
               Week
             </a>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item" href="">Week 1</a>
+              {% for week in weeks %}
+              <a class="dropdown-item" href="">Week {{week.week_number}}</a>
+              {% endfor %}
+
             </div>
           </div>
         </nav>

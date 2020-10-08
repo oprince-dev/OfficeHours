@@ -127,6 +127,8 @@ def students():
 # @login_required
 def add_student():
     current_user.id = 6
+    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    blocks = teacher.blocks
     subjects = Subject.query.all()
     students = Student.query.all()
     form = AppendStudentForm()
@@ -141,7 +143,7 @@ def add_student():
         block.students.append(student)
         db.session.commit()
 
-    return render_template('students/add_student.html', students=students, form=form)
+    return render_template('students/add_student.html', blocks=blocks, students=students, form=form)
 
 @app.route("/edit/student", methods=['GET', 'POST'])
 # @login_required
@@ -201,7 +203,7 @@ def new_class():
 
         return redirect(url_for('classes'))
 
-    return render_template('classes/new_class.html', form=form)
+    return render_template('classes/new_class.html', blocks=blocks, form=form)
 
 @app.route("/edit/class", methods=['GET', 'POST'])
 # @login_required
@@ -270,12 +272,15 @@ def new_assignment():
 
     if form.validate_on_submit():
         week = Week.query.filter_by(block_id=form.block.data, week_number=form.week_number.data).first()
+        due_date = week.end_date if form.end_of_week.data else form.due_date.data
         assignment = Assignment(week_id=form.week_number.data,
+                                due_date=due_date,
                                 title=form.title.data,
                                 description=form.description.data)
 
         week.assignments.append(assignment)
         db.session.commit()
+        
         return redirect(url_for('new_assignment'))
 
     return render_template('assignments/new_assignment.html', blocks=blocks, weeks=weeks, form=form)
@@ -315,7 +320,7 @@ def edit_assignment():
             form.title.data = assignment.title
             form.description.data = assignment.description
 
-    return render_template('assignments/edit_assignment.html', assignment=assignment, form=form)
+    return render_template('assignments/edit_assignment.html', blocks=blocks, assignment=assignment, form=form)
 
 """
     Weeks

@@ -75,6 +75,7 @@ class Assignment(db.Model):
     week_id = db.Column(db.Integer, db.ForeignKey('week.id'))
     title = db.Column(db.String(30))
     description = db.Column(db.String(300))
+    due_date = db.Column(db.Date(), nullable=False)
 
 
     def __repr__(self):

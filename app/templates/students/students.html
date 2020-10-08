@@ -5,8 +5,7 @@
 {% block body %}
 <div class="row headerRow mb-3">
   <div class="col-md-12">
-    <h5>
-      <a href="{{ url_for('classes') }}">Students</a>
+    <h5>Students
       {% if selected_block %}
         / <a href="{{ url_for('classes', b=selected_block.id) }}">{{ selected_block.subject.title }} - {{ selected_block.title }}</a>
       {% endif %}

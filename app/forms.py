@@ -3,7 +3,7 @@ from app.models import Teacher
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, PasswordField, SubmitField, BooleanField, TextAreaField, Form, FormField, FieldList
 from wtforms.fields.html5 import DateField, IntegerField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired, ValidationError, Optional
 from wtforms.validators import Email, EqualTo, Length
 
 """
@@ -74,6 +74,8 @@ class WeekForm(FlaskForm):
 class AssignmentForm(FlaskForm):
     block = SelectField('Block', validators=[DataRequired()])
     week_number = IntegerField('Week', validators=[DataRequired()])
+    due_date = DateField('Due Date', validators=[Optional()])
+    end_of_week = BooleanField('End of Week', validators=[Optional()])
     title = StringField('Title', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     submit = SubmitField('Add Assignment')

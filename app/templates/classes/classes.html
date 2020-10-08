@@ -8,7 +8,7 @@
     <h5>
       <a href="{{ url_for('classes') }}">Classes</a>
       {% if selected_block %}
-        / <a href="{{ url_for('classes', b=selected_block.id) }}">{{ selected_block.subject.title }} - {{ selected_block.title }}</a>
+        / {{ selected_block.subject.title }} - {{ selected_block.title }}
       {% endif %}
     </h5>
   </div>
