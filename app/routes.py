@@ -24,9 +24,11 @@ def index():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     form = LoginForm()
     if form.validate_on_submit():
         user = Teacher.query.filter_by(email=form.email.data).first()
+        # if user and (user.password == form.password.data):
         if user and bcrypt.check_password_hash(user.password,
                                                form.password.data):
             login_user(user, remember=True)
@@ -248,13 +250,16 @@ def assignments():
     blocks = teacher.blocks
     selected_block = None
     weeks = Week.query.filter(Week.block.has(teacher_id=current_user.id)).all()
-    assignments = Assignment.query.all()
+    # assignments = weeks.assignments
+    # assignments = None
+    assignments = Assignment.query.join(Week).join(Block).filter(Block.teacher_id == 6).all()
 
     if request.args:
         args = request.args
         if "b" in args:
             block_id = args["b"]
             selected_block = Block.query.filter_by(id=block_id).first()
+            # weeks = selected_block.weeks
             assignments = Assignment.query.filter(Assignment.week.has(block_id=selected_block.id)).all()
 
 
@@ -280,7 +285,7 @@ def new_assignment():
 
         week.assignments.append(assignment)
         db.session.commit()
-        
+
         return redirect(url_for('new_assignment'))
 
     return render_template('assignments/new_assignment.html', blocks=blocks, weeks=weeks, form=form)
@@ -294,12 +299,6 @@ def edit_assignment():
     form.block.choices = [(block.id, f"{block.subject.title} {block.title}") for block in teacher.blocks]
 
 
-    if form.validate_on_submit():
-        assignment.title = form.title.data
-        assignment.description = form.description.data
-        db.session.commit()
-
-        return redirect(url_for('assignments'))
 
     if request.args:
         args = request.args
@@ -319,6 +318,13 @@ def edit_assignment():
             form.process()
             form.title.data = assignment.title
             form.description.data = assignment.description
+
+        if form.validate_on_submit():
+            assignment.title = form.title.data
+            assignment.description = form.description.data
+            db.session.commit()
+
+            return redirect(url_for('assignments'))
 
     return render_template('assignments/edit_assignment.html', blocks=blocks, assignment=assignment, form=form)
 
