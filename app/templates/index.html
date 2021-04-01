@@ -11,7 +11,7 @@
     {% block topnav %}{% endblock topnav %}
     {% block leftnav %}{% endblock leftnav %}
     <div class="content">
-      <div class="container mt-4">
+      <div class="container mt-4 mb-4">
         {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
         {% for category, message in messages %}

@@ -1,0 +1,23 @@
+{% block block_snippet %}
+<div class="row mt-4" id="addStudentFormContainer">
+  <div class="col-md-4 m-auto">
+    <div class="card">
+      <div class="card-body">
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            {{ form.class_subject(placeholder=form.class_subject.label.text,
+              class="") }}
+          </div>
+          <div class="form-group">
+            {{ form.class_block(placeholder=form.class_block.label.text,
+              class="") }}
+          </div>
+          <div class="form-group">
+            {{ form.submit(placeholder=form.submit.label.text,
+              class="btn btn-primary") }}
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock block_snippet %}

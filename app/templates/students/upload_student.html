@@ -1,0 +1,50 @@
+{% extends "index.html" %}
+{% include "nav/topnav.html" %}
+{% include "nav/leftnav.html" %}
+
+{% block body %}
+<div class="row headerRow mb-3">
+  <div class="col-md-12">
+    <h5>Import Students from Excel/CSV</h5>
+  </div>
+</div>
+<form id="upload_students" class="form" method="post" enctype="multipart/form-data">
+  {{ upload_students_form.hidden_tag() }}
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+            <div class="row mb-3">
+              <fieldset>
+                <input type="file" name="file">
+              </fieldset>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <fieldset>
+                  <button class="btn btn-primary" id="upload_students_submit" type="button" name="button">Upload</button>
+                </fieldset>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<form id="submit_students" action="{{ url_for('submit_students_file') }}" class="form" method="post">
+  {{ submit_students_form.hidden_tag() }}
+  <div class="row mb-2" id="fileSudentsTableContainer">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body" id="">
+          {% include "students/snippets/file_students_table.html" %}
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      {{ submit_students_form.submit(placeholder=submit_students_form.submit.label.text,
+        class="btn btn-primary form-control") }}
+    </div>
+  </div>
+</form>
+{% endblock %}

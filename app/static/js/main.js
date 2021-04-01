@@ -52,3 +52,37 @@ $(function() {
     $("#addStudentForm > div.form-group > input#last").val(last)
   });
 });
+$(function() {
+  $("#upload_students_submit").on("click", function() {
+    var form_data = new FormData($('#upload_students')[0]);
+    $.ajax({
+      type: 'POST',
+      url: '/add/student/upload',
+      data: form_data,
+      contentType: false,
+      cache: false,
+      processData: false,
+      success: function(data) {
+        $('#fileStudentsTable > thead').children().remove();
+        $('#fileStudentsTable > tbody').children().remove();
+        $('#fileSudentsTableContainer').show();
+        trh = $('<tr/>');
+        console.log(data.table_columns)
+        $.each(data.table_columns, function(i, head) {
+          console.log(head);
+          trh.append('<th>' + head + '</th>');
+          $("#fileStudentsTable > thead").append(trh);
+        })
+        $.each(data.file_students, function(i, obj) {
+          tr = $('<tr/>');
+          console.log(obj)
+          tr.append('<td><input type="hidden" name="first" value="'+ obj.First +'" >' + obj.First + '</input></td>');
+          tr.append('<td><input type="hidden" name="last" value="'+ obj.Last +'" >' + obj.Last + '</input></td>');
+          tr.append('<td><input type="hidden" name="email" value="'+ obj.Email +'" >' + obj.Email + '</input></td>');
+          tr.append('<td><input type="hidden" name="DOB" value="'+ obj.DOB +'" >' + obj.DOB + '</input></td>');
+          $("#fileStudentsTable > tbody").append(tr);
+        });
+      },
+    });
+  });
+});

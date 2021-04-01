@@ -10,68 +10,24 @@
 </div>
 <div class="row mb-3">
   <div class="col-md-12">
+    <a class="btn btn-primary" role="button" href="/add/student/upload">Upload Excel/CSV</a>
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col-md-12">
     <input class="form-control mr-sm-2" type="text" id="studentFilterInput" onkeyup="studentFilter()" placeholder="Search for student..">
   </div>
 </div>
-<div class="row">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-body" id="studentFilterContainer">
-        <table class="table table-hover sticky" id="studentFilterTable">
-          <thead class="">
-            <tr>
-              <th>ID</th>
-              <th>First</th>
-              <th>Last</th>
-            </tr>
-          </thead>
-          <tbody id="studentFilterBody">
-            {% for student in students %}
-            <tr>
-              <td>{{ student.id }}</td>
-              <td>{{ student.first_name }}</td>
-              <td>{{ student.last_name }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+<form id="addStudentForm" method="post">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body" id="studentFilterContainer">
+          {% include "students/snippets/db_students_table.html" %}
+        </div>
       </div>
     </div>
   </div>
-</div>
-</div>
-<div class="row mt-4" id="addStudentFormContainer">
-<div class="m-auto">
-  <div class="card">
-    <div class="card-body">
-      <form id="addStudentForm" method="post">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-          {{ form.student_id(placeholder=form.student_id.label.text,
-            class="form-control") }}
-        </div>
-        <div class="form-group">
-          {{ form.first(placeholder=form.first.label.text,
-            class="form-control") }}
-        </div>
-        <div class="form-group">
-          {{ form.last(placeholder=form.last.label.text,
-            class="form-control") }}
-        </div>
-        <div class="form-group">
-          {{ form.class_subject(placeholder=form.class_subject.label.text,
-            class="form-control") }}
-        </div>
-        <div class="form-group">
-          {{ form.class_block(placeholder=form.class_block.label.text,
-            class="form-control") }}
-        </div>
-        <div class="form-group">
-          {{ form.submit(placeholder=form.submit.label.text,
-            class="btn btn-primary form-control") }}
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+  {% include "students/snippets/block_snippet.html" %}
+</form>
 {% endblock %}

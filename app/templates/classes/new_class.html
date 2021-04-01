@@ -13,20 +13,20 @@
     <div class="card">
       <div class="card-body">
         <form class="form" method="post">
-          {{ form.hidden_tag() }}
+          {{ manual_block_form.hidden_tag() }}
           <div class="row mb-3">
             <div class="col-md-2">
-              {{ form.class_subject.label }}
-              {{ form.class_subject(class="form-control") }}
+              {{ manual_block_form.class_subject.label }}
+              {{ manual_block_form.class_subject(class="form-control") }}
             </div>
             <div class="col-md-2">
-              {{ form.class_block.label }}
-              {{ form.class_block(class="form-control", min=1) }}
+              {{ manual_block_form.class_block.label }}
+              {{ manual_block_form.class_block(class="", min=1) }}
             </div>
           </div>
           <div class="row">
             <div class="col-md-12">
-              {{ form.submit(class="btn btn-primary") }}
+              {{ manual_block_form.submit(class="btn btn-primary") }}
             </div>
           </div>
         </form>

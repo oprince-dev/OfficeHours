@@ -1,6 +1,7 @@
 from app import app
 from app.models import Teacher
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SelectField, PasswordField, SubmitField, BooleanField, TextAreaField, Form, FormField, FieldList
 from wtforms.fields.html5 import DateField, IntegerField
 from wtforms.validators import DataRequired, ValidationError, Optional
@@ -51,15 +52,23 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired("Password Required"), Length(min=3, max=20)])
     submit = SubmitField('Sign In')
 
+class UploadStudentsFileForm(FlaskForm):
+    file = FileField('File')
+
+class SubmitStudentsForm(FlaskForm):
+    select = BooleanField('Select')
+    submit = SubmitField('Submit')
+
 class AppendStudentForm(FlaskForm):
-    student_id = StringField('ID', validators=[DataRequired()])
-    first = StringField('First', validators=[DataRequired()])
-    last = StringField('Last', validators=[DataRequired()])
+    select = BooleanField('Select')
+    # student_id = StringField('ID', validators=[DataRequired()])
+    # first = StringField('First', validators=[DataRequired()])
+    # last = StringField('Last', validators=[DataRequired()])
     class_subject = SelectField('Subject', validators=[DataRequired()])
     class_block = SelectField('Block', choices=['A', 'B', 'C'], validators=[DataRequired()])
-    submit = SubmitField('Add Student')
+    submit = SubmitField('Add Student(s)')
 
-class BlockForm(FlaskForm):
+class ManualBlockForm(FlaskForm):
     class_subject = StringField('Subject', validators=[DataRequired()])
     class_block = SelectField('Block', choices=["A", "B", "C", "D", "E", "F"], validators=[DataRequired()])
     submit = SubmitField('Add Class')

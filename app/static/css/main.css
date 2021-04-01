@@ -188,3 +188,11 @@ a:hover {
 .plus-link img {
   padding-bottom: 4px;
 }
+
+#fileSudentsTableContainer {
+  display: none;
+}
+
+body {
+  height: 100%;
+}

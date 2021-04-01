@@ -31,10 +31,10 @@ class Student(db.Model):
     first_name = db.Column(db.String(30), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
+    password = db.Column(db.String(60), nullable=True)
 
     def __repr__(self):
-        return f"Student(id='{self.id}', name='{self.first_name}, {self.last_name}')"
+        return f"Student(id='{self.id}', name='{self.first_name} {self.last_name}', email={self.email}, password={self.password})"
 
 class Subject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
