@@ -175,15 +175,16 @@ def upload_students_file():
 def submit_students_file():
     submission_dict = dict(request.form.lists())
     # keys = ['first', 'last', 'email', 'DOB']
-    first_names = submission_dict['first']
-    last_names = submission_dict['last']
-    emails = submission_dict['email']
+    first_names = submission_dict['First']
+    last_names = submission_dict['Last']
+    emails = submission_dict['Email']
     DOBS = submission_dict['DOB']
     students = zip(first_names, last_names, emails, DOBS)
     print(students)
     for s in students:
         print(s)
         student = Student(first_name=s[0], last_name=s[1], email=s[2])
+        print(student)
         db.session.add(student)
         db.session.commit()
     # students_dict = dict(zip(keys, students))

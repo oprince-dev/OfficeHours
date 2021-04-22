@@ -67,20 +67,16 @@ $(function() {
         $('#fileStudentsTable > tbody').children().remove();
         $('#fileSudentsTableContainer').show();
         trh = $('<tr/>');
-        console.log(data.table_columns)
         $.each(data.table_columns, function(i, head) {
-          console.log(head);
           trh.append('<th>' + head + '</th>');
           $("#fileStudentsTable > thead").append(trh);
         })
         $.each(data.file_students, function(i, obj) {
           tr = $('<tr/>');
-          console.log(obj)
-          tr.append('<td><input type="hidden" name="first" value="'+ obj.First +'" >' + obj.First + '</input></td>');
-          tr.append('<td><input type="hidden" name="last" value="'+ obj.Last +'" >' + obj.Last + '</input></td>');
-          tr.append('<td><input type="hidden" name="email" value="'+ obj.Email +'" >' + obj.Email + '</input></td>');
-          tr.append('<td><input type="hidden" name="DOB" value="'+ obj.DOB +'" >' + obj.DOB + '</input></td>');
-          $("#fileStudentsTable > tbody").append(tr);
+          $.each(data.table_columns, function(i, name) {
+            tr.append('<td><input type="hidden" name="'+ name +'" value="'+ obj[name] +'" >' + obj[name] + '</input></td>');
+            $("#fileStudentsTable > tbody").append(tr);
+          });
         });
       },
     });
