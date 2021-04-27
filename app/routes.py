@@ -1,20 +1,46 @@
-from app import app, db, bcrypt
-from app.models import  Student, Subject, Block, Teacher, Week, Assignment, student_block
-from app.forms import TeacherRegisterForm, StudentRegisterForm, LoginForm, UploadStudentsFileForm, SubmitStudentsForm, AppendStudentForm, WeekForm, AssignmentForm, ManualBlockForm
-from flask import render_template, url_for, redirect, flash, jsonify, request
-from flask_login import login_user, logout_user, current_user, login_required
-from sqlalchemy import or_
 import pandas as pd
-import datetime
+from flask import flash
+from flask import jsonify
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask_login import current_user
+from flask_login import login_required
+from flask_login import login_user
+from flask_login import logout_user
+from sqlalchemy import exc
+from sqlalchemy import or_
+
+from app import app
+from app import bcrypt
+from app import db
+from app.forms import AppendStudentForm
+from app.forms import AssignmentForm
+from app.forms import LoginForm
+from app.forms import ManualBlockForm
+from app.forms import StudentRegisterForm
+from app.forms import SubmitStudentsForm
+from app.forms import TeacherRegisterForm
+from app.forms import UploadStudentsFileForm
+from app.forms import WeekForm
+from app.models import Assignment
+from app.models import Block
+from app.models import Student
+from app.models import Subject
+from app.models import Teacher
+from app.models import Week
 
 
 """
     Home
 """
-@app.route("/")
+
+
+@app.route('/')
 @login_required
 def index():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     return render_template('home.html', blocks=blocks)
 
@@ -22,7 +48,9 @@ def index():
 """
     Auth
 """
-@app.route("/login", methods=['GET', 'POST'])
+
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -30,25 +58,28 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = Teacher.query.filter_by(email=form.email.data).first()
-        # if user and (user.password == form.password.data):
-        if user and bcrypt.check_password_hash(user.password,
-                                               form.password.data):
+        if user and bcrypt.check_password_hash(
+            user.password,
+            form.password.data,
+        ):
             login_user(user, remember=True)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(
-                    url_for('index'))
+                url_for('index'),
+            )
         else:
             flash('Email and/or Password did not match.', 'danger')
 
     return render_template('auth/login.html', form=form)
 
-@app.route("/logout")
+
+@app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
 
-@app.route("/register/teacher", methods=['GET', 'POST'])
+@app.route('/register/teacher', methods=['GET', 'POST'])
 def register_teacher():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -56,19 +87,26 @@ def register_teacher():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(
-                form.password.data).decode('utf-8')
-        teacher = Teacher(first_name=form.first.data,
-                          last_name=form.last.data,
-                          email=form.email.data,
-                          password=hashed_password)
+            form.password.data,
+        ).decode('utf-8')
+        teacher = Teacher(
+            first_name=form.first.data,
+            last_name=form.last.data,
+            email=form.email.data,
+            password=hashed_password,
+        )
         db.session.add(teacher)
         db.session.commit()
-        flash(f'Account created. Welcome, {form.first.data} {form.last.data}!', 'success')
+        flash(
+            f'Account created. Welcome, {form.first.data} {form.last.data}!',
+            'success',
+        )
         return redirect(url_for('index'))
 
     return render_template('auth/register.html', form=form, title='Teacher')
 
-@app.route("/register/student", methods=['GET', 'POST'])
+
+@app.route('/register/student', methods=['GET', 'POST'])
 def register_student():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -76,14 +114,20 @@ def register_student():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(
-                form.password.data).decode('utf-8')
-        student = Student(first_name=form.last_name.data,
-                          last_name=form.last_name.data,
-                          email=form.email.data,
-                          password=hashed_password)
+            form.password.data,
+        ).decode('utf-8')
+        student = Student(
+            first_name=form.last_name.data,
+            last_name=form.last_name.data,
+            email=form.email.data,
+            password=hashed_password,
+        )
         db.session.add(student)
         db.session.commit()
-        flash(f'Account created. Welcome, {form.first.data} {form.last.data}!', 'success')
+        flash(
+            f'Account created. Welcome, {form.first.data} {form.last.data}!',
+            'success',
+        )
         return redirect(url_for('register_student'))
 
     return render_template('auth/register.html', form=form, title='Student')
@@ -92,72 +136,91 @@ def register_student():
 """
     Students
 """
-@app.route("/students", methods=['GET'])
+
+
+@app.route('/students', methods=['GET'])
 @login_required
 def students():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     selected_block = None
 
     if request.args:
         args = request.args
 
-        if "b" in args:
-            block_id = args["b"]
+        if 'b' in args:
+            block_id = args['b']
             selected_block = Block.query.filter_by(id=block_id).first()
             students = selected_block.students
 
-        elif "search" in args:
-            name_query = args["search"]
-            students = Student.query.filter(or_(
+        elif 'search' in args:
+            name_query = args['search']
+            students = Student.query.filter(
+                or_(
                     Student.first_name.like(name_query),
-                    Student.last_name.like(name_query)
-                    )).all()
+                    Student.last_name.like(name_query),
+                ),
+            ).all()
         else:
             selected_block = None
-            students = Student.query.filter(Student.classes.any(teacher_id=teacher.id))
+            students = Student.query.filter(
+                Student.classes.any(teacher_id=teacher.id),
+            )
     else:
         blocks = teacher.blocks
         selected_block = None
-        students = Student.query.filter(Student.classes.any(teacher_id=teacher.id))
+        students = Student.query.filter(
+            Student.classes.any(teacher_id=teacher.id),
+        )
 
-    return render_template('students/students.html',
-                           blocks=blocks,
-                           students=students,
-                           selected_block=selected_block)
+    return render_template(
+        'students/students.html',
+        blocks=blocks,
+        students=students,
+        selected_block=selected_block,
+    )
 
-@app.route("/add/student", methods=['GET', 'POST'])
+
+@app.route('/add/student', methods=['GET', 'POST'])
 @login_required
 def add_student():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     subjects = Subject.query.all()
     students = Student.query.all()
     form = AppendStudentForm()
-    form.class_subject.choices = [(subject.id, subject.title) for subject in subjects]
+    form.class_subject.choices = [
+        (subject.id, subject.title)
+        for subject in subjects
+    ]
 
     if form.validate_on_submit():
         selected = request.form.getlist('select')
         subject_id = form.class_subject.data
-        subject = Subject.query.filter_by(id=subject_id).first()
         block_title = form.class_block.data
-        block = Block.query.filter_by(subject_id=subject_id, title=block_title).first()
+        block = Block.query.filter_by(
+            subject_id=subject_id, title=block_title,
+        ).first()
         students = Student.query.filter(Student.id.in_(selected)).all()
-        print(f'block: {block} student: {students}')
 
         for student in students:
             block.students.append(student)
         db.session.commit()
         return redirect(url_for('students', b=block.id))
 
+    return render_template(
+        'students/add_student.html',
+        blocks=blocks,
+        students=students,
+        form=form,
+    )
 
-    return render_template('students/add_student.html', blocks=blocks, students=students, form=form)
 
-@app.route("/add/student/upload", methods=['GET', 'POST'])
+@app.route('/add/student/upload', methods=['GET', 'POST'])
 @login_required
 def upload_students_file():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
-    subjects = Subject.query.all()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
+    blocks = teacher.blocks
     upload_students_form = UploadStudentsFileForm()
     submit_students_form = SubmitStudentsForm()
     if request.method == 'POST':
@@ -165,81 +228,101 @@ def upload_students_file():
             f = request.files.get('file')
             df = pd.read_excel(f)
             table_columns = df.columns.tolist()
-            df['DOB'] = df['DOB'].dt.strftime('%m-%d-%y')
+            messages = []
+            try:
+                df['DOB'] = df['DOB'].dt.strftime('%m-%d-%y')
+            except KeyError:
+                print('no dob')
+                messages = [{
+                    'message': 'Column does not exist',
+                    'category': 'Danger',
+                }]
             file_students = df.to_dict('index')
-            return jsonify(table_columns=table_columns, file_students=file_students)
-    return render_template('students/upload_student.html', upload_students_form=upload_students_form, submit_students_form=submit_students_form)
+            return jsonify(
+                table_columns=table_columns,
+                file_students=file_students,
+                flash_messages=messages,
+            )
+    return render_template(
+        'students/upload_student.html',
+        blocks=blocks,
+        upload_students_form=upload_students_form,
+        submit_students_form=submit_students_form,
+    )
 
-@app.route("/add/student/submit", methods=['GET', 'POST'])
+
+@app.route('/add/student/submit', methods=['GET', 'POST'])
 @login_required
 def submit_students_file():
     submission_dict = dict(request.form.lists())
-    # keys = ['first', 'last', 'email', 'DOB']
     first_names = submission_dict['First']
     last_names = submission_dict['Last']
     emails = submission_dict['Email']
     DOBS = submission_dict['DOB']
     students = zip(first_names, last_names, emails, DOBS)
-    print(students)
     for s in students:
-        print(s)
-        student = Student(first_name=s[0], last_name=s[1], email=s[2])
-        print(student)
+        student = Student(first_name=s[0], last_name=s[1], email=s[2], dob=s[3])
         db.session.add(student)
         db.session.commit()
-    # students_dict = dict(zip(keys, students))
-    # print(students_dict)
-    # for i, k in zip(first_names, last_names):
-    #     print(f'{i} {k}')
-    # for i, n in enumerate(submission_dict):
-        # print(f'{i} {n}')
-        # student = Student(first_name=)
     return redirect(url_for('classes'))
 
-@app.route("/edit/student", methods=['GET', 'POST'])
+
+@app.route('/edit/student', methods=['GET', 'POST'])
 @login_required
 def edit_student():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     if request.args:
         args = request.args
-        student_id = args["s"]
-        if "d" in args:
-            block_id = args["d"]
+        student_id = args['s']
+        if 'd' in args:
+            block_id = args['d']
             block = Block.query.filter_by(id=block_id).first()
             student = Student.query.filter_by(id=student_id).first()
             block.students.remove(student)
             db.session.commit()
 
         student = Student.query.filter_by(id=student_id).first()
-    return render_template('students/edit_student.html', blocks=blocks, student=student)
+    return render_template(
+        'students/edit_student.html',
+        blocks=blocks,
+        student=student,
+    )
+
 
 """
     Classes
 """
-@app.route("/classes")
+
+
+@app.route('/classes')
 @login_required
 def classes():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     selected_block = None
 
     if request.args:
         args = request.args
 
-        if "b" in args:
-            block_id = args["b"]
+        if 'b' in args:
+            block_id = args['b']
             selected_block = Block.query.filter_by(id=block_id).first()
 
-    return render_template('classes/classes.html', blocks=blocks, selected_block=selected_block)
+    return render_template(
+        'classes/classes.html',
+        blocks=blocks,
+        selected_block=selected_block,
+    )
 
-@app.route("/new/class", methods=['GET', 'POST'])
+
+@app.route('/new/class', methods=['GET', 'POST'])
 @login_required
 def new_class():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     try:
         blocks = teacher.blocks
-    except:
+    except exc.SQLAlchemyError:
         pass
     manual_block_form = ManualBlockForm()
 
@@ -247,31 +330,40 @@ def new_class():
         subject = Subject(title=manual_block_form.class_subject.data)
         db.session.add(subject)
         db.session.commit()
-        subject = Subject.query.filter_by(title=manual_block_form.class_subject.data).first()
-        block = Block(subject_id=subject.id,
-                      teacher_id=teacher.id,
-                      title=manual_block_form.class_block.data)
+        subject = Subject.query.filter_by(
+            title=manual_block_form.class_subject.data,
+        ).first()
+        block = Block(
+            subject_id=subject.id,
+            teacher_id=teacher.id,
+            title=manual_block_form.class_block.data,
+        )
         db.session.add(block)
         db.session.commit()
 
         return redirect(url_for('classes'))
 
-    return render_template('classes/new_class.html', blocks=blocks, manual_block_form=manual_block_form)
+    return render_template(
+        'classes/new_class.html',
+        blocks=blocks,
+        manual_block_form=manual_block_form,
+    )
 
-@app.route("/edit/class", methods=['GET', 'POST'])
+
+@app.route('/edit/class', methods=['GET', 'POST'])
 @login_required
 def edit_class():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
-    form = BlockForm()
+    form = ManualBlockForm()
 
     args = request.args
-    block_id = args["b"]
+    block_id = args['b']
     selected_block = Block.query.filter_by(id=block_id).first()
     students = selected_block.students
 
-    if "d" in args:
-        student_id = args["d"]
+    if 'd' in args:
+        student_id = args['d']
         student = Student.query.filter_by(id=student_id).first()
         selected_block.students.remove(student)
         db.session.commit()
@@ -283,81 +375,119 @@ def edit_class():
 
         return redirect(url_for('edit_class', b=selected_block.id))
 
-    return render_template('classes/edit_class.html',
-                            blocks=blocks,
-                            selected_block=selected_block,
-                            students=students,
-                            form=form)
+    return render_template(
+        'classes/edit_class.html',
+        blocks=blocks,
+        selected_block=selected_block,
+        students=students,
+        form=form,
+    )
+
 
 """
     Assignments
 """
-@app.route("/assignments", methods=['GET'])
+
+
+@app.route('/assignments', methods=['GET'])
 @login_required
 def assignments():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     selected_block = None
     weeks = Week.query.filter(Week.block.has(teacher_id=current_user.id)).all()
     # assignments = weeks.assignments
     # assignments = None
-    assignments = Assignment.query.join(Week).join(Block).filter(Block.teacher_id == 6).all()
+    assignments = Assignment.query.join(Week).join(
+        Block,
+    ).filter(Block.teacher_id == 6).all()
 
     if request.args:
         args = request.args
-        if "b" in args:
-            block_id = args["b"]
+        if 'b' in args:
+            block_id = args['b']
             selected_block = Block.query.filter_by(id=block_id).first()
             # weeks = selected_block.weeks
-            assignments = Assignment.query.filter(Assignment.week.has(block_id=selected_block.id)).all()
+            assignments = Assignment.query.filter(
+                Assignment.week.has(block_id=selected_block.id),
+            ).all()
+
+    return render_template(
+        'assignments/assignments.html',
+        blocks=blocks,
+        selected_block=selected_block,
+        weeks=weeks,
+        assignments=assignments,
+    )
 
 
-    return render_template('assignments/assignments.html', blocks=blocks, selected_block=selected_block, weeks=weeks, assignments=assignments)
-
-@app.route("/new/assignment", methods=['GET', 'POST'])
+@app.route('/new/assignment', methods=['GET', 'POST'])
 @login_required
 def new_assignment():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     weeks = Week.query.filter(Week.block.has(teacher_id=current_user.id)).all()
     form = AssignmentForm()
-    form.block.choices = [(block.id, f"{block.subject.title} {block.title}") for block in teacher.blocks]
+    form.block.choices = [
+        (
+            block.id,
+            f'{block.subject.title} {block.title}',
+        ) for block in teacher.blocks
+    ]
 
     if form.validate_on_submit():
-        week = Week.query.filter_by(block_id=form.block.data, week_number=form.week_number.data).first()
-        due_date = week.end_date if form.end_of_week.data else form.due_date.data
-        assignment = Assignment(week_id=form.week_number.data,
-                                due_date=due_date,
-                                title=form.title.data,
-                                description=form.description.data)
+        week = Week.query.filter_by(
+            block_id=form.block.data, week_number=form.week_number.data,
+        ).first()
+        if form.end_of_week.data:
+            due_date = week.end_date
+        else:
+            due_date = form.due_date.data
+        assignment = Assignment(
+            week_id=form.week_number.data,
+            due_date=due_date,
+            title=form.title.data,
+            description=form.description.data,
+        )
 
         week.assignments.append(assignment)
         db.session.commit()
 
         return redirect(url_for('new_assignment'))
 
-    return render_template('assignments/new_assignment.html', blocks=blocks, weeks=weeks, form=form)
+    return render_template(
+        'assignments/new_assignment.html',
+        blocks=blocks,
+        weeks=weeks,
+        form=form,
+    )
 
-@app.route("/edit/assignment", methods=['GET', 'POST'])
+
+@app.route('/edit/assignment', methods=['GET', 'POST'])
 @login_required
 def edit_assignment():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     form = AssignmentForm()
-    form.block.choices = [(block.id, f"{block.subject.title} {block.title}") for block in teacher.blocks]
+    form.block.choices = [
+        (
+            block.id,
+            f'{block.subject.title} {block.title}',
+        ) for block in teacher.blocks
+    ]
 
     if request.args:
         args = request.args
 
-        if "d" in args:
-            assignment_id = args["d"]
+        if 'd' in args:
+            assignment_id = args['d']
             Assignment.query.filter_by(id=assignment_id).delete()
             db.session.commit()
 
             return redirect(url_for('assignments'))
 
-        if "a" in args:
-            assignment_id = args["a"]
+        if 'a' in args:
+            assignment_id = args['a']
             assignment = Assignment.query.filter_by(id=assignment_id).first()
             form.block.default = assignment.week.block_id
             form.week_number.default = assignment.week.week_number
@@ -372,47 +502,70 @@ def edit_assignment():
 
             return redirect(url_for('assignments'))
 
-    return render_template('assignments/edit_assignment.html', blocks=blocks, assignment=assignment, form=form)
+    return render_template(
+        'assignments/edit_assignment.html',
+        blocks=blocks,
+        assignment=assignment,
+        form=form,
+    )
+
 
 """
     Weeks
 """
-@app.route("/weeks", methods=['GET', 'POST'])
+
+
+@app.route('/weeks', methods=['GET', 'POST'])
 @login_required
 def weeks():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     weeks = Week.query.filter(Week.block.has(teacher_id=current_user.id)).all()
     selected_block = None
 
     if request.args:
         args = request.args
-        if "b" in args:
-            block_id = args["b"]
+        if 'b' in args:
+            block_id = args['b']
             weeks = Week.query.filter(Week.block.has(id=block_id)).all()
             selected_block = Block.query.filter_by(id=block_id).one()
-            print(weeks)
 
-    return render_template('weeks/weeks.html', blocks=blocks, weeks=weeks, selected_block=selected_block)
+    return render_template(
+        'weeks/weeks.html',
+        blocks=blocks,
+        weeks=weeks,
+        selected_block=selected_block,
+    )
 
-@app.route("/new/week", methods=['GET', 'POST'])
+
+@app.route('/new/week', methods=['GET', 'POST'])
 @login_required
 def new_week():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     form = WeekForm()
-    form.block.choices = [(block.id, f"{block.subject.title} {block.title}") for block in teacher.blocks]
+    form.block.choices = [
+        (
+            block.id,
+            f'{block.subject.title} {block.title}',
+        ) for block in teacher.blocks
+    ]
 
     if form.validate_on_submit():
-        week = Week(block_id = int(form.block.data),
-                    week_number = form.week_number.data,
-                    start_date = form.start_date.data,
-                    end_date = form.end_date.data)
+        week = Week(
+            block_id=int(form.block.data),
+            week_number=form.week_number.data,
+            start_date=form.start_date.data,
+            end_date=form.end_date.data,
+        )
         try:
             db.session.add(week)
             db.session.commit()
-        except:
-            flash(f"Week {form.week_number.data} for this class already exists", "warning")
+        except exc.SQLAlchemyError:
+            flash(
+                f'Week {form.week_number.data} for this class already exists',
+                'warning',
+            )
 
         return redirect(url_for('weeks'))
 
@@ -422,32 +575,41 @@ def new_week():
 """
     Whiteboard
 """
-@app.route("/whiteboard")
+
+
+@app.route('/whiteboard')
 @login_required
 def whiteboard():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     return render_template('whiteboard.html', blocks=blocks)
+
 
 """
     Online Room
 """
-@app.route("/onlineroom")
+
+
+@app.route('/onlineroom')
 @login_required
 def onlineroom():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     return render_template('onlineroom.html', blocks=blocks)
+
 
 """
     Help Desk
 """
-@app.route("/helpdesk")
+
+
+@app.route('/helpdesk')
 @login_required
 def helpdesk():
-    teacher = Teacher.query.filter_by(id = current_user.id).first()
+    teacher = Teacher.query.filter_by(id=current_user.id).first()
     blocks = teacher.blocks
     return render_template('helpdesk.html', blocks=blocks)
+
 
 @app.errorhandler(404)
 def error_404(error):
