@@ -10,4 +10,5 @@ popper.min.js
 popper.min.js.map
 icons
 site.db
+site_bu.db
 Dockerfile

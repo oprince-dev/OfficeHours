@@ -63,6 +63,7 @@ $(function() {
       cache: false,
       processData: false,
       success: function(data) {
+        $('#flash-messages > div').hide()
         $('#fileStudentsTable > thead').children().remove();
         $('#fileStudentsTable > tbody').children().remove();
         $('#fileSudentsTableContainer').show();
@@ -78,6 +79,9 @@ $(function() {
             $("#fileStudentsTable > tbody").append(tr);
           });
         });
+      },
+      error: function(data) {
+        $('#flash-messages').append("<div class='alert alert-danger'>File type not supported. Please use excel or csv files.</div>");
       },
     });
   });

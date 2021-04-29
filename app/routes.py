@@ -226,11 +226,22 @@ def upload_students_file():
     if request.method == 'POST':
         if upload_students_form.validate_on_submit():
             f = request.files.get('file')
-            df = pd.read_excel(f)
+            try:
+                if f.content_type == 'text/csv':
+                    df = pd.read_csv(f)
+                else:
+                    df = pd.read_excel(f)
+            except ValueError:
+                return jsonify(
+                    success=False,
+                    status_code=415,
+                    err_msg='File type not supported.'
+                ), 415
             table_columns = df.columns.tolist()
             messages = []
             try:
-                df['DOB'] = df['DOB'].dt.strftime('%m-%d-%y')
+                df['DOB'] = pd.to_datetime(df['DOB'], errors='coerce')
+                df['DOB'] = df['DOB'].dt.strftime('%m/%d/%y')
             except KeyError:
                 print('no dob')
                 messages = [{
@@ -238,11 +249,12 @@ def upload_students_file():
                     'category': 'Danger',
                 }]
             file_students = df.to_dict('index')
+
             return jsonify(
                 table_columns=table_columns,
                 file_students=file_students,
-                flash_messages=messages,
-            )
+                messages=messages,
+            ), 200
     return render_template(
         'students/upload_student.html',
         blocks=blocks,
@@ -261,7 +273,12 @@ def submit_students_file():
     DOBS = submission_dict['DOB']
     students = zip(first_names, last_names, emails, DOBS)
     for s in students:
-        student = Student(first_name=s[0], last_name=s[1], email=s[2], dob=s[3])
+        student = Student(
+                          first_name=s[0],
+                          last_name=s[1],
+                          email=s[2],
+                          dob=s[3]
+                          )
         db.session.add(student)
         db.session.commit()
     return redirect(url_for('classes'))
