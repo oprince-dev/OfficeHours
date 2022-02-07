@@ -2,7 +2,7 @@
 
 ## About
 
-> Office House is an application designed to help teachers better manage their online classes.
+> Office Hours is an application designed to help teachers better manage their online classes.
 
 ![Mock Students](app/static/img/mocks/Students.jpg)
 ![Mock Classes](app/static/img/mocks/Classes.jpg)
